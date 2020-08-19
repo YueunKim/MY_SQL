@@ -1,0 +1,142 @@
+create table student1
+as select * from student where stu_grade in (1,2);
+create table subject1
+as select * from subject;
+create table enrol1
+as select * from enrol;
+select * from student1;
+select * from subject1;
+select * from enrol1;
+
+--no1. 학번 20101059, 이름 조병준, 학과 컴퓨터정보, 학년 1, 반 B, 키 164, 몸무게 70인 남학생이 추가되었다
+INSERT INTO student1 
+VALUES(20151059,'조병준','컴퓨터정보',1,'B','M',164,70);
+SELECT * FROM STUDENT1;
+
+--no2. 학번 20102038, 이름 남지선, 학과 전기전자, 학년 1, 반 C, 여학생이 추가되었다
+INSERT INTO STUDENT1
+VALUES(20102038,'남지선','전기전자',1,'C','F',NULL,NULL);
+SELECT * FROM STUDENT1;
+
+--no3. 학번 20103009, 이름 박소신, 학과 기계, 20153075 학생과 같은 학년, 반을 갖는 남학생이 추가되었다.
+INSERT INTO STUDENT1(STU_NO, STU_NAME, STU_DEPT, STU_GENDER)
+VALUES(20103009,'박소신','기계','M');
+SELECT * FROM STUDENT1;
+
+UPDATE STUDENT1
+SET STU_GRADE = (SELECT STU_GRADE
+FROM STUDENT1
+WHERE STU_NO = 20153075)
+WHERE STU_NO = 20103009;
+
+UPDATE STUDENT1
+SET STU_CLASS = (SELECT STU_CLASS
+FROM STUDENT1
+WHERE STU_NO = 20153075)
+WHERE STU_NO = 20103009;
+SELECT * FROM STUDENT1;
+
+--no4. student1 테이블에 학생(student) 테이블의 3학년 학생들 데이터를 입력하라.
+INSERT INTO STUDENT1
+SELECT * FROM STUDENT
+WHERE STU_GRADE LIKE 3;
+SELECT * FROM STUDENT1;
+
+--no5. 학번 20131001의 반을 B로 바꾸어라.
+UPDATE STUDENT1
+SET STU_CLASS = 'B'
+WHERE STU_NO = 20131001;
+SELECT * FROM STUDENT1;
+
+--no6. 20152088 학생의 키가 2cm 자랐다.
+UPDATE STUDENT1
+SET STU_HEIGHT = STU_HEIGHT + 2
+WHERE STU_NO = 20152088; --조건문에 의해서도 가능
+SELECT * FROM STUDENT1;
+
+--no7. 모든 학생의 학년이 올랐다.
+UPDATE STUDENT1
+SET STU_GRADE = STU_GRADE + 1;
+SELECT * FROM STUDENT1;
+
+--no9. 전자회로실험 과목의 점수를 10점 감점하라.
+select * from subject1;
+select * from enrol1;
+
+UPDATE ENROL1
+SET ENR_GRADE = ENR_GRADE - 10
+WHERE SUB_NO = (SELECT SUB_NO
+FROM SUBJECT1
+WHERE SUB_NAME = '전자회로실험');
+SELECT * FROM ENROL1;
+
+--no10. 20151062 학생이 소프트웨어공학 시험 중 부정행위로 0점이 되었다.
+UPDATE ENROL1
+SET ENR_GRADE = 0
+WHERE SUB_NO = (SELECT SUB_NO
+FROM SUBJECT1
+WHERE SUB_NAME = '소프트웨어공학');
+SELECT * FROM ENROL1;
+
+--no11. 20153088 학생이 자퇴하였다.
+DELETE FROM ENROL1
+WHERE STU_NO = 20153088;
+SELECT * FROM ENROL1;
+
+--no12. 과목번호 112, 과목이름 자동화시스템, 교수명 고종민, 학년 3, 학과 기계가 추가되었다.
+select * from subject1;
+
+INSERT INTO SUBJECT1
+VALUES(112,'자동화시스템','고종민',3,'기계');
+SELECT * FROM SUBJECT1;
+
+--no13. 과목번호가 110에서 501로 변경되었다.
+UPDATE SUBJECT1
+SET SUB_NO = 501
+WHERE SUB_NO = 110;
+SELECT * FROM SUBJECT1;
+
+--no14. 과목번호 101이 폐강되었다.
+DELETE FROM SUBJECT1
+WHERE SUB_NO = 101;
+SELECT * FROM SUBJECT1;
+
+--no15. enrol1 테이블에서 subject1에 없는 과목번호를 999로 변경하라.
+SELECT * FROM ENROL1;
+SELECT * FROM SUBJECT1;
+
+UPDATE ENROL1
+SET SUB_NO = 999
+WHERE SUB_NO NOT IN (SELECT SUB_NO FROM SUBJECT1);
+SELECT * FROM ENROL1;
+
+--no16. enrol1 테이블에서 student1에 없는 학번을 99999999로 변경하라.
+SELECT * FROM STUDENT1;
+SELECT * FROM ENROL1;
+
+UPDATE ENROL1
+SET STU_NO = 99999999
+WHERE STU_NO NOT IN (SELECT STU_NO FROM STUDENT1);
+SELECT * FROM ENROL1;
+
+--no17. enrol1에서 과목번호 999를 삭제하라.
+DELETE FROM ENROL1
+WHERE SUB_NO = 999;
+SELECT * FROM ENROL1;
+
+--no18. enrol1에서 학번 99999999를 삭제하라.
+DELETE FROM ENROL1
+WHERE STU_NO = 99999999;
+SELECT * FROM ENROL1;
+
+--no19. enrol1에 없는 과목들을 삭제하라.
+SELECT * FROM ENROL1;
+SELECT * FROM SUBJECT1;
+
+DELETE SUBJECT1
+WHERE SUB_NO NOT IN (SELECT SUB_NO FROM ENROL1);
+SELECT * FROM SUBJECT1;
+
+--no20. enrol1 전체 테이블의 데이터를 삭제하라.
+DELETE FROM ENROL1;
+SELECT * FROM ENROL1;
