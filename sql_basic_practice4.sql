@@ -1,0 +1,189 @@
+--1
+CREATE TABLE product (
+p_code char(3) NOT NULL,
+p_name varchar2(30),
+p_cost number,
+p_group varchar2(30),
+CONSTRAINT product_p PRIMARY KEY (p_code));
+
+--2
+DESC product;
+
+--3
+INSERT INTO product
+VALUES ('101','19인치 모니터',150000,'모니터');
+INSERT INTO product
+VALUES ('102','22인치 모니터',200000,'모니터');
+INSERT INTO product
+VALUES('103','25인치 모니터',260000,'모니터');
+INSERT INTO product
+VALUES ('201','유선마우스',7000,'마우스');
+INSERT INTO product
+VALUES ('202','무선마우스',18000,'마우스');
+INSERT INTO product
+VALUES ('301','유선키보드',8000,'키보드');
+INSERT INTO product
+VALUES ('302','무선키보드',22000,'키보드');
+INSERT INTO product
+VALUES ('401','2채널 스피커',10000,'스피커');
+INSERT INTO product
+VALUES ('402','5.1채널 스피커',120000,'스피커');
+
+--4
+SELECT * FROM product ;
+
+--5
+CREATE TABLE trade(
+t_seg NUMBER NOT NULL,
+p_code CHAR(3),
+c_code VARCHAR2(4),
+t_date date,
+t_qty number,
+t_cost number,
+t_tax number,
+CONSTRAINT trade_t PRIMARY KEY (t_seg));
+
+--6
+DESC trade;
+
+--7
+INSERT INTO trade
+VALUES (61,'131','101',to_date('2016-04-01','yyyy-mm-dd'),10,150000,150000);
+INSERT INTO trade
+VALUES (5,'102','102',to_date('2016-04-26','yyyy-mm-dd'),8,200000,160000);
+INSERT INTO trade
+VALUES (8,'103','101',to_date('2016-05-20','yyyy-mm-dd'),2,260000,52000);
+INSERT INTO trade
+VALUES (3,'201','103',to_date('2016-04-13','yyyy-mm-dd'),7,7000,4900);
+INSERT INTO trade
+VALUES 2,'201','101',to_date('2016-04-12','yyyy-mm-dd'),5,7000,3500);
+INSERT INTO trade
+VALUES (9,'202','104',to_date('2016-06-02','yyyy-mm-dd'),8,18000,14400);
+INSERT INTO trade
+VALUES (6,'301','103',to_date('2016-05-02','yyyy-mm-dd'),12,8000,9600);
+INSERT INTO trade
+VALUES (10,'302','103',to_date('2016-06-09','yyyy-mm-dd'),9,22000,19800);
+INSERT INTO trade
+VALUES (4,'401','104',to_date('2016-04-20','yyyy-mm-dd'),15,10000,15000);
+INSERT INTO trade
+VALUES (11,'401','105',to_date('2016-06-15','yyyy-mm-dd'),20,10000,20000);
+INSERT INTO trade
+VALUES (7,'402','102',to_date('2016-05-08','yyyy-mm-dd'),5,120000,60000);
+
+--8
+SELECT * FROM trade;
+
+--9
+CREATE TABLE customer(
+c_code VARCHAR2(4) NOT NULL,
+c_name VARCHAR2(30),
+c_ceo VARCHAR2(12),
+c_addr VARCHAR2(100),
+c_phone VARCHAR2(13),
+CONSTRAINT customer_c PRIMARY KEY (c_code));
+
+--10
+DESC customer;
+
+--11
+INSERT INTO CUSTOMER VALUES('101','늘푸른회사','김수종','경기도 안산시','010-1234-5678');
+INSERT INTO CUSTOMER VALUES('102','사랑과바다','박나리','경기도 평택시','010-1122-3344');
+INSERT INTO CUSTOMER VALUES('103','대한회사','이민수','서울시 구로구','010-3785-8809');
+INSERT INTO CUSTOMER VALUES('104','하얀기판','허진수','경상북도 포항시','010-8569-3468');
+INSERT INTO CUSTOMER VALUES('105','한마음한뜻','하민우','인천시 남동구','010-9455-6033');
+
+--12
+SELECT * FROM CUSTOMER;
+
+--13
+CREATE TABLE stock(
+p_code CHAR(3) NOT NULL,
+s_qty NUMBER NOT NULL,
+s_lastdate DATE,
+CONSTRAINT stock_s PRIMARY KEY (p_code,s_qty));
+
+--14
+DESC stock;
+
+--15
+INSERT INTO STOCK VALUES ('101',50,TO_DATE('2016-04-01','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('102',20,TO_DATE('2016-04-26','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('103',5,TO_DATE('2016-05-20','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('201',2,TO_DATE('2016-04-13','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('202',15,TO_DATE('2016-06-02','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('301',0,TO_DATE('2016-06-02','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('302',20,TO_DATE('2016-06-09','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('401',10,TO_DATE('2016-06-15','YYYY-MM-DD'));
+INSERT INTO STOCK VALUES ('402',7,TO_DATE('2016-05-08','YYYY-MM-DD'));
+
+--16
+SELECT * FROM STOCK;
+
+--17
+ALTER TABLE product
+ADD (비고 VARCHAR2(20));
+
+--18
+SELECT * FROM product;
+
+--19
+ALTER TABLE product
+MODIFY (비고 VARCHAR2(30));
+
+--20
+DESC product;
+
+--21
+ALTER TABLE product
+DROP (비고);
+
+--22
+DESC product;
+
+--23
+RENAME product TO product1;
+
+--24
+SELECT * FROM user_tables;
+
+--25
+TRUNCATE TABLE product1;
+
+--26
+SELECT * FROM product1;
+
+--27
+DROP TABLE product1; 
+ROLLBACK;
+
+--28
+SELECT * FROM product1;
+
+--29
+ALTER TABLE PRODUCT1 ADD CONSTRAINT P_P_CONDE PRIMARY KEY(P_CODE);
+
+ALTER TABLE STOCK ADD CONSTRAINT F_P_CONDE PRIMARY KEY(P_CODE, S_QTY)
+REFERENCES PRODUCT(P_CODE);
+
+SELECT OWNER, CONSTRAINT_NAME, TABLE_NAME 
+FROM USER_CONSTRAINTS
+WHERE TABLE_NAME IN (‘PRODUCT’,’STOCK’);
+
+--30
+CEREATE VIEW V_TABLE 
+AS SELECT * FROM TRADE 
+WHERE P_CODE = 401;
+
+--31
+SELECT * 
+FROM V_TABLE 
+WHERE P_CODE=401;
+
+--32
+SELECT ROWNUM, C_CODE
+FROM (SELECT C_CODE FROM TRADE ORDER BY T_DATE DESC)
+WHERE ROWNUM <= 1 ;
+
+SELECT C_CODE
+FROM TRADE
+WHERE T_DATE = (SELECT MAX(T_DATE) FROM TRADE;
